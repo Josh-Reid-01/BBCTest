@@ -3,69 +3,103 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.RadioButton;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements OnClickListener
-{
+public class MainActivity extends AppCompatActivity {
+    private Spinner spinner;
     private TextView rawDataDisplay;
-    private Button startButton;
+
     private String result = "";
-    private String url1="";
-    private RadioButton glasgow,london,newYork;
-
+    private String url1 = "";
+    private RadioButton glasgow, london, newYork;
+    private String requestLnk = "";
     // Traffic Scotland Planned Roadworks XML link
-    private String urlSource="https://weather-broker-cdn.api.bbci.co.uk/en/forecast/rss/3day/2648579";
+    private String urlSource = "https://weather-broker-cdn.api.bbci.co.uk/en/forecast/rss/3day/2648579";
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
-        Log.e("MyTag","in onCreate");
-        // Set up the raw links to the graphical components
-        glasgow = (RadioButton) findViewById(R.id.glasgow);
-        london = (RadioButton) findViewById(R.id.london);
-        newYork= (RadioButton) findViewById(R.id.newYork);
         rawDataDisplay = (TextView)findViewById(R.id.rawDataDisplay);
-        startButton = (Button)findViewById(R.id.startButton);
-        startButton.setOnClickListener(this);
-        Log.e("MyTag","after startButton");
-        // More Code goes here
+
+        //get spinner from layour
+        spinner = findViewById(R.id.spinner);
+        //create list of compys objects
+        List<Campus> campusList = new ArrayList<>();
+        Campus glasgow = new Campus(1, "Glasgow", "https://weather-broker-cdn.api.bbci.co.uk/en/forecast/rss/3day/2648579");
+        Campus london = new Campus(2, "London", "https://weather-broker-cdn.api.bbci.co.uk/en/forecast/rss/3day/2643743");
+        Campus newyork = new Campus(3, "NewYork", "https://weather-broker-cdn.api.bbci.co.uk/en/forecast/rss/3day/5128581");
+        campusList.add(glasgow);
+        campusList.add(london);
+        campusList.add(newyork);
+
+        //create adapter
+        ArrayAdapter<Campus> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, campusList);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int i, long l) {
+                Campus campus = (Campus) parent.getSelectedItem();
+                displayCampusData(campus);
+                //add the location data from the spinner
+
+                //call the method to show waether
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        //get listview from layout
+
+
     }
 
-    public void startProgress()
+    public void getSelectedCampus(View v) {
+        Campus campus = (Campus) spinner.getSelectedItem();
+        displayCampusData(campus);
+
+    }
+
+    private void displayCampusData(Campus campus){
+
+        String location = campus.getLocation();
+
+
+
+        requestLnk=location;
+        startProgress(requestLnk);
+    }
+
+    public void startProgress(String requestLnk)
     {
         // Run network access on a separate thread;
-        new Thread(new Task(urlSource)).start();
+        new Thread(new Task(requestLnk)).start();
 
-    } //
-
-    @Override
-    public void onClick(View v)
-    {
-        if(glasgow.isChecked()){
-urlSource="https://weather-broker-cdn.api.bbci.co.uk/en/forecast/rss/3day/2648579";
-        }else if(london.isChecked()){
-            urlSource="https://weather-broker-cdn.api.bbci.co.uk/en/forecast/rss/3day/2643743";
-        }else if(newYork.isChecked()){
-            urlSource="https://weather-broker-cdn.api.bbci.co.uk/en/forecast/rss/3day/5128581";
-        }
-        Log.e("MyTag","in onClick");
-        startProgress();
-        Log.e("MyTag","after startProgress");
     }
-    // Need separate thread to access the internet resource over network
-    // Other neater solutions should be adopted in later iterations.
+
     private class Task implements Runnable
     {
         private String url;
@@ -112,13 +146,7 @@ urlSource="https://weather-broker-cdn.api.bbci.co.uk/en/forecast/rss/3day/264857
                 Log.e("MyTag", "ioexception in run");
             }
 
-            //
-            // Now that you have the xml data you can parse it
-            //
 
-            // Now update the TextView to display raw XML data
-            // Probably not the best way to update TextView
-            // but we are just getting started !
 
             MainActivity.this.runOnUiThread(new Runnable()
             {
@@ -131,3 +159,11 @@ urlSource="https://weather-broker-cdn.api.bbci.co.uk/en/forecast/rss/3day/264857
 
     }
 }
+
+
+
+
+
+
+
+
