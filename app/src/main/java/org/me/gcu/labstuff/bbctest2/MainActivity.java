@@ -26,13 +26,11 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
     private Spinner spinner;
     private TextView rawDataDisplay;
-
+    private String LINK = "https://weather-broker-cdn.api.bbci.co.uk/en/forecast/rss/3day/";
     private String result = "";
-    private String url1 = "";
-    private RadioButton glasgow, london, newYork;
     private String requestLnk = "";
     // Traffic Scotland Planned Roadworks XML link
-    private String urlSource = "https://weather-broker-cdn.api.bbci.co.uk/en/forecast/rss/3day/2648579";
+
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,9 +42,9 @@ public class MainActivity extends AppCompatActivity {
         spinner = findViewById(R.id.spinner);
         //create list of compys objects
         List<Campus> campusList = new ArrayList<>();
-        Campus glasgow = new Campus(1, "Glasgow", "https://weather-broker-cdn.api.bbci.co.uk/en/forecast/rss/3day/2648579");
-        Campus london = new Campus(2, "London", "https://weather-broker-cdn.api.bbci.co.uk/en/forecast/rss/3day/2643743");
-        Campus newyork = new Campus(3, "NewYork", "https://weather-broker-cdn.api.bbci.co.uk/en/forecast/rss/3day/5128581");
+        Campus glasgow = new Campus(1, "Glasgow", "2648579");
+        Campus london = new Campus(2, "London", "2643743");
+        Campus newyork = new Campus(3, "NewYork", "5128581");
         campusList.add(glasgow);
         campusList.add(london);
         campusList.add(newyork);
@@ -61,7 +59,10 @@ public class MainActivity extends AppCompatActivity {
                 Campus campus = (Campus) parent.getSelectedItem();
                 displayCampusData(campus);
                 //add the location data from the spinner
-
+                requestLnk= LINK+campus.getLocation();
+                new Thread(new Task(requestLnk)).start();
+                //call the method to show waether
+                showLink(requestLnk);
                 //call the method to show waether
 
             }
@@ -85,20 +86,28 @@ public class MainActivity extends AppCompatActivity {
 
     private void displayCampusData(Campus campus){
 
+        int id =campus.getId();
+        String name= campus.getName();
         String location = campus.getLocation();
-
-
-
-        requestLnk=location;
-        startProgress(requestLnk);
-    }
-
-    public void startProgress(String requestLnk)
-    {
-        // Run network access on a separate thread;
+        requestLnk=LINK+location;
         new Thread(new Task(requestLnk)).start();
-
+        String campusData = "Name "+name +" Location "+location;
+        Toast.makeText(this,campusData,Toast.LENGTH_LONG).show();
     }
+
+    private void showLink(String lnk){
+
+
+
+        Toast.makeText(this,lnk,Toast.LENGTH_LONG).show();
+    }
+
+//    public void startProgress()
+//    {
+//        // Run network access on a separate thread;
+//        new Thread(new Task(requestLnk)).start();
+//
+//    }
 
     private class Task implements Runnable
     {
