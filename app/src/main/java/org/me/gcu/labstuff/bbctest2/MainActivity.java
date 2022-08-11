@@ -3,14 +3,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -60,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
                 displayCampusData(campus);
                 //add the location data from the spinner
                 requestLnk= LINK+campus.getLocation();
-                new Thread(new Task(requestLnk)).start();
+                new Thread(new Task()).start();
                 //call the method to show waether
                 showLink(requestLnk);
                 //call the method to show waether
@@ -90,7 +85,8 @@ public class MainActivity extends AppCompatActivity {
         String name= campus.getName();
         String location = campus.getLocation();
         requestLnk=LINK+location;
-        new Thread(new Task(requestLnk)).start();
+        //commented out call from onItemSelected this method just for debugging
+        //new Thread(new Task(requestLnk)).start();
         String campusData = "Name "+name +" Location "+location;
         Toast.makeText(this,campusData,Toast.LENGTH_LONG).show();
     }
@@ -111,63 +107,34 @@ public class MainActivity extends AppCompatActivity {
 
     private class Task implements Runnable
     {
-        private String url;
+        private String raw;
+        //ive removed url/aurl as not needed here
 
-        public Task(String aurl)
+        public Task()
         {
-            url = aurl;
+
         }
 
         @Override
         public void run()
         {
-
-            URL aurl;
-            URLConnection yc;
-            BufferedReader in = null;
-            String inputLine = "";
-
-
-            Log.e("MyTag","in run");
-
-            try
-            {
-                Log.e("MyTag","in try");
-                aurl = new URL(url);
-                yc = aurl.openConnection();
-                in = new BufferedReader(new InputStreamReader(yc.getInputStream()));
-                Log.e("MyTag","after ready");
-                //
-                // Now read the data. Make sure that there are no specific hedrs
-                // in the data file that you need to ignore.
-                // The useful data that you need is in each of the item entries
-                //
-                while ((inputLine = in.readLine()) != null)
-                {
-                    result = result + inputLine;
-                    Log.e("MyTag",inputLine);
-
-                }
-                in.close();
-            }
-            catch (IOException ae)
-            {
-                Log.e("MyTag", "ioexception in run");
-            }
-
-
-
-            MainActivity.this.runOnUiThread(new Runnable()
+            //extracted your code into RSS Helper
+            raw= RSSHelper.getRawData(requestLnk);
+            //changed MainActivity.this.runOnUiThread to runOnUiThread
+            runOnUiThread(new Runnable()
             {
                 public void run() {
                     Log.d("UI thread", "I am the UI thread");
-                    rawDataDisplay.setText(result);
+                    if (raw!=null) {
+                        rawDataDisplay.setText(raw);
+                    }
                 }
             });
         }
 
     }
 }
+
 
 
 
