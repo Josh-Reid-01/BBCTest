@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,14 +25,16 @@ public class MainActivity extends AppCompatActivity {
     private String LINK = "https://weather-broker-cdn.api.bbci.co.uk/en/forecast/rss/3day/";
     private String result = "";
     private String requestLnk = "";
+    private ListView lv;
+    private ArrayList<RSSItem> rssItems = new ArrayList<RSSItem>();
     // Traffic Scotland Planned Roadworks XML link
 
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+lv = (ListView)findViewById(R.id.lv);
         setContentView(R.layout.activity_main);
-        rawDataDisplay = (TextView)findViewById(R.id.rawDataDisplay);
+
 
         //get spinner from layour
         spinner = findViewById(R.id.spinner);
@@ -43,6 +46,9 @@ public class MainActivity extends AppCompatActivity {
         campusList.add(glasgow);
         campusList.add(london);
         campusList.add(newyork);
+
+
+
 
         //create adapter
         ArrayAdapter<Campus> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, campusList);
@@ -107,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
 
     private class Task implements Runnable
     {
-        private String raw;
+        private String data;
         //ive removed url/aurl as not needed here
 
         public Task()
@@ -119,19 +125,26 @@ public class MainActivity extends AppCompatActivity {
         public void run()
         {
             //extracted your code into RSS Helper
-            raw= RSSHelper.getRawData(requestLnk);
+ data=RSSHelper.getRawData(requestLnk);
+rssItems=RSSHelper.parseRSS(data);
+
             //changed MainActivity.this.runOnUiThread to runOnUiThread
             runOnUiThread(new Runnable()
             {
                 public void run() {
                     Log.d("UI thread", "I am the UI thread");
-                    if (raw!=null) {
-                        rawDataDisplay.setText(raw);
+                    if (data!=null) {
+fillListView();
                     }
                 }
             });
         }
 
+    }
+
+    public void fillListView(){
+        CustomBaseAdapter myCustomAdapter = new CustomBaseAdapter(MainActivity.this,rssItems);
+                       lv.setAdapter(myCustomAdapter);
     }
 }
 

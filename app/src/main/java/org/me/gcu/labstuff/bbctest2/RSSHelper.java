@@ -14,9 +14,16 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.sql.DatabaseMetaData;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 public class RSSHelper {
+
 
     private static Exception exception=null;
 
@@ -69,12 +76,14 @@ public class RSSHelper {
         }
         return result;
     }
-    public static ArrayList<String> parseRSS(String link){
-        ArrayList<String> titles = null;
-        ArrayList<String> links = null;
+    public static ArrayList<RSSItem> parseRSS(String link){
+        ArrayList<RSSItem> rssItemList = new ArrayList<>();
+        RSSItem rssItem = null;
+        String rssTitle = "";
+        String rssDesc = "";
+        String rssDate="";
         try {
-            titles = new ArrayList<>();
-            links = new ArrayList<>();
+
             URL url= new URL(link);
             XmlPullParserFactory factory= XmlPullParserFactory.newInstance();
             factory.setNamespaceAware(false);
@@ -86,22 +95,31 @@ public class RSSHelper {
             int eventType = xpp.getEventType();
             while(eventType!= XmlPullParser.END_DOCUMENT){
                 if(eventType== XmlPullParser.START_TAG){
-                    switch(xpp.getName()){
-                        case "item": case "ITEM":
-                            insideItem=true;
-                            break;
-                        case "title":
-                            if(insideItem){
-                                titles.add(xpp.nextText());
-                            }
-                            break;
-                        case "link":
-                            if(insideItem){
-                                links.add(xpp.nextText());
-                            }
+                    if(xpp.getName().equals("item")) {
+                      insideItem=true;
                     }
+                    if(xpp.getName().equalsIgnoreCase("title") && insideItem){
+                        rssTitle=xpp.nextText();
+                        rssItem.setTitle(rssTitle);
+                    }
+                    if(xpp.getName().equalsIgnoreCase("description") && insideItem){
+                        rssDesc=xpp.nextText();
+                        rssItem.setDesc(rssDesc);
+                    }
+                    if(xpp.getName().equalsIgnoreCase("pubDate") && insideItem){
+                      rssDate=xpp.nextText();
+                      rssItem.setPubDate(rssDate);
+                    }
+
+
+
+
+
+
                 }else if(eventType==XmlPullParser.END_TAG && xpp.getName().equalsIgnoreCase("item")){
                     insideItem=false;
+                    rssItemList.add(rssItem);
+
                 }
                 eventType= xpp.next();
             }
@@ -116,6 +134,9 @@ public class RSSHelper {
             e.printStackTrace();
         }
 
-        return titles;
+        return rssItemList;
+
     }
+
+
 }
