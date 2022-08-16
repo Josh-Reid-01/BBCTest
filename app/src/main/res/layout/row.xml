@@ -3,22 +3,28 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/titletxt"
-        android:text="Title"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/desctxt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Desc" />
+        <TextView
+            android:id="@+id/titletxt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Title" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/datetxt"
-        android:text="Date"/>
+        <TextView
+            android:id="@+id/desctxt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Desc" />
+
+        <TextView
+            android:id="@+id/datetxt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Date" />
+    </LinearLayout>
 
 </LinearLayout>

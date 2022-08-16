@@ -78,7 +78,7 @@ public class RSSHelper {
     }
     public static ArrayList<RSSItem> parseRSS(String link){
         ArrayList<RSSItem> rssItemList = new ArrayList<>();
-        RSSItem rssItem = null;
+
         String rssTitle = "";
         String rssDesc = "";
         String rssDate="";
@@ -86,7 +86,7 @@ public class RSSHelper {
 
             URL url= new URL(link);
             XmlPullParserFactory factory= XmlPullParserFactory.newInstance();
-            factory.setNamespaceAware(false);
+            factory.setNamespaceAware(true);
             XmlPullParser xpp = factory.newPullParser();
 
             xpp.setInput(getInputStream(url),"UTF_8");
@@ -95,30 +95,34 @@ public class RSSHelper {
             int eventType = xpp.getEventType();
             while(eventType!= XmlPullParser.END_DOCUMENT){
                 if(eventType== XmlPullParser.START_TAG){
-                    if(xpp.getName().equals("item")) {
-                      insideItem=true;
-                    }
-                    if(xpp.getName().equalsIgnoreCase("title") && insideItem){
-                        rssTitle=xpp.nextText();
-                        rssItem.setTitle(rssTitle);
-                    }
-                    if(xpp.getName().equalsIgnoreCase("description") && insideItem){
-                        rssDesc=xpp.nextText();
-                        rssItem.setDesc(rssDesc);
-                    }
-                    if(xpp.getName().equalsIgnoreCase("pubDate") && insideItem){
-                      rssDate=xpp.nextText();
-                      rssItem.setPubDate(rssDate);
+                    if(xpp.getName().equalsIgnoreCase("item")) {
+                        insideItem = true;
+
                     }
 
+                        if (xpp.getName().equalsIgnoreCase("title") && insideItem) {
+                            rssTitle = xpp.nextText();
+                            Log.d("MyTag", "title is " + rssTitle);
 
+                        }
+                        if (xpp.getName().equalsIgnoreCase("description") && insideItem) {
+                            rssDesc = xpp.nextText();
+                            Log.d("MyTag", "desc is " + rssDesc);
 
+                        }
+                        if (xpp.getName().equalsIgnoreCase("pubDate") && insideItem) {
+                            rssDate = xpp.nextText();
+                            Log.d("MyTag", "date is " + rssDate);
 
+                            RSSItem rssItem = new RSSItem(rssTitle,rssDesc,rssDate);
+                            rssItemList.add(rssItem);
+
+                        }
 
 
                 }else if(eventType==XmlPullParser.END_TAG && xpp.getName().equalsIgnoreCase("item")){
                     insideItem=false;
-                    rssItemList.add(rssItem);
+
 
                 }
                 eventType= xpp.next();

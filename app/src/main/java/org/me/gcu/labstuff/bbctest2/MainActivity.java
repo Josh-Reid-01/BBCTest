@@ -1,6 +1,10 @@
 package org.me.gcu.labstuff.bbctest2;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -26,14 +30,30 @@ public class MainActivity extends AppCompatActivity {
     private String result = "";
     private String requestLnk = "";
     private ListView lv;
-    private ArrayList<RSSItem> rssItems = new ArrayList<RSSItem>();
+    private ArrayList<RSSItem> rssItemList = new ArrayList<RSSItem>();
+    private ArrayAdapter<RSSItem> weatherArrayAdapter;
+
+    private IntentFilter intentFilter;
     // Traffic Scotland Planned Roadworks XML link
+    private BroadcastReceiver intentReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //overwrites the RssList
+            ArrayList<RSSItem> tempRssList =  (ArrayList<RSSItem>)intent.getSerializableExtra("stories");
+            if (tempRssList != null) {
+                rssItemList.clear();
+                rssItemList.addAll(tempRssList);
+                weatherArrayAdapter.notifyDataSetChanged();
+            }
+        }
+    };
 
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-lv = (ListView)findViewById(R.id.lv);
         setContentView(R.layout.activity_main);
+lv = (ListView)findViewById(R.id.lv);
+
 
 
         //get spinner from layour
@@ -75,6 +95,11 @@ lv = (ListView)findViewById(R.id.lv);
         });
 
         //get listview from layout
+        intentFilter = new IntentFilter();
+        intentFilter.addAction("RSS_RETRIEVED");
+        registerReceiver(intentReceiver,intentFilter);
+
+        //start service
 
 
     }
@@ -104,12 +129,7 @@ lv = (ListView)findViewById(R.id.lv);
         Toast.makeText(this,lnk,Toast.LENGTH_LONG).show();
     }
 
-//    public void startProgress()
-//    {
-//        // Run network access on a separate thread;
-//        new Thread(new Task(requestLnk)).start();
-//
-//    }
+
 
     private class Task implements Runnable
     {
@@ -125,27 +145,25 @@ lv = (ListView)findViewById(R.id.lv);
         public void run()
         {
             //extracted your code into RSS Helper
- data=RSSHelper.getRawData(requestLnk);
-rssItems=RSSHelper.parseRSS(data);
+
+rssItemList=RSSHelper.parseRSS(requestLnk);
 
             //changed MainActivity.this.runOnUiThread to runOnUiThread
             runOnUiThread(new Runnable()
             {
                 public void run() {
                     Log.d("UI thread", "I am the UI thread");
-                    if (data!=null) {
-fillListView();
-                    }
+
+                        CustomBaseAdapter myCustomAdapter = new CustomBaseAdapter(MainActivity.this,rssItemList);
+                        lv.setAdapter(myCustomAdapter);
+
                 }
             });
         }
 
     }
 
-    public void fillListView(){
-        CustomBaseAdapter myCustomAdapter = new CustomBaseAdapter(MainActivity.this,rssItems);
-                       lv.setAdapter(myCustomAdapter);
-    }
+
 }
 
 
