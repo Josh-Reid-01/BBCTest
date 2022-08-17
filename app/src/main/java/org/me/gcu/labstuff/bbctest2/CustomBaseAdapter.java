@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -41,11 +42,22 @@ inflater=LayoutInflater.from(ctx);
      }
          RSSItem tempRSSItem=(RSSItem) getItem(i);
 
+        ImageView img = (ImageView) convertView.findViewById(R.id.wthrIcon);
          TextView tvTitle=(TextView) convertView.findViewById(R.id.titletxt);
          TextView tvDesc=(TextView) convertView.findViewById(R.id.desctxt);
          TextView tvDate=(TextView) convertView.findViewById(R.id.datetxt);
 
 
+if(tempRSSItem.getTitle().contains("Sunny")) {
+    img.setBackgroundResource(R.drawable.day_clear);
+}
+else if (tempRSSItem.getTitle().contains("Rain")) {
+            img.setBackgroundResource(R.drawable.day_rain);
+        }
+
+ else if (tempRSSItem.getTitle().contains("Cloud")){
+    img.setBackgroundResource(R.drawable.cloudy);
+}
          tvTitle.setText(tempRSSItem.getTitle());
          tvDesc.setText(tempRSSItem.getDesc());
          tvDate.setText(tempRSSItem.getPubDate());
