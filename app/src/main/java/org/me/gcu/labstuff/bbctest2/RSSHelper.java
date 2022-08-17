@@ -82,6 +82,7 @@ public class RSSHelper {
         String rssTitle = "";
         String rssDesc = "";
         String rssDate="";
+
         try {
 
             URL url= new URL(link);
@@ -101,7 +102,10 @@ public class RSSHelper {
                     }
 
                         if (xpp.getName().equalsIgnoreCase("title") && insideItem) {
+
                             rssTitle = xpp.nextText();
+
+
                             Log.d("MyTag", "title is " + rssTitle);
 
                         }

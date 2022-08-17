@@ -62,10 +62,16 @@ lv = (ListView)findViewById(R.id.lv);
         List<Campus> campusList = new ArrayList<>();
         Campus glasgow = new Campus(1, "Glasgow", "2648579");
         Campus london = new Campus(2, "London", "2643743");
-        Campus newyork = new Campus(3, "NewYork", "5128581");
+        Campus newyork = new Campus(3, "New York", "5128581");
+        Campus oman = new Campus(4, "Oman", "287286");
+        Campus mauritius = new Campus(5, "Mauritius", "934154");
+        Campus bangladesh= new Campus(6, "Bangladesh", "1185241");
         campusList.add(glasgow);
         campusList.add(london);
         campusList.add(newyork);
+        campusList.add(oman);
+        campusList.add(mauritius);
+        campusList.add(bangladesh);
 
 
 

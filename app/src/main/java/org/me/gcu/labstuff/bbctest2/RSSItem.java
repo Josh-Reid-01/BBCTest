@@ -7,11 +7,15 @@ public class RSSItem {
     private String title,desc;
     private String pubDate;
 
-    public RSSItem(String title, String desc, String pubDate) {
+    public RSSItem( String title, String desc, String pubDate) {
+
         this.title = title;
         this.desc = desc;
         this.pubDate = pubDate;
+
     }
+
+
 
     public String getTitle() {
         return title;
@@ -36,4 +40,7 @@ public class RSSItem {
     public void setPubDate(String pubDate) {
         this.pubDate = pubDate;
     }
+
+
+
 }

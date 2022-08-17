@@ -40,13 +40,16 @@ inflater=LayoutInflater.from(ctx);
          convertView = LayoutInflater.from(context).inflate(R.layout.row, parent, false);
      }
          RSSItem tempRSSItem=(RSSItem) getItem(i);
+
          TextView tvTitle=(TextView) convertView.findViewById(R.id.titletxt);
          TextView tvDesc=(TextView) convertView.findViewById(R.id.desctxt);
          TextView tvDate=(TextView) convertView.findViewById(R.id.datetxt);
 
+
          tvTitle.setText(tempRSSItem.getTitle());
          tvDesc.setText(tempRSSItem.getDesc());
          tvDate.setText(tempRSSItem.getPubDate());
+
 
          return convertView;
 
