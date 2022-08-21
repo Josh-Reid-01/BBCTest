@@ -40,42 +40,7 @@ public class RSSHelper {
         return link;
     }
 
-    public static String getRawData(String url){
-        URL aurl;
-        URLConnection yc;
-        BufferedReader in = null;
-        String inputLine = "";
-        String result=null;
 
-
-        Log.e("MyTag","in run");
-
-        try
-        {
-            Log.e("MyTag","in try");
-            aurl = new URL(url);
-            yc = aurl.openConnection();
-            in = new BufferedReader(new InputStreamReader(yc.getInputStream()));
-            Log.e("MyTag","after ready");
-            //
-            // Now read the data. Make sure that there are no specific hedrs
-            // in the data file that you need to ignore.
-            // The useful data that you need is in each of the item entries
-            //
-            while ((inputLine = in.readLine()) != null)
-            {
-                result = result + inputLine;
-                Log.e("MyTag",inputLine);
-
-            }
-            in.close();
-        }
-        catch (IOException ae)
-        {
-            Log.e("MyTag", "ioexception in run");
-        }
-        return result;
-    }
     public static ArrayList<RSSItem> parseRSS(String link){
         ArrayList<RSSItem> rssItemList = new ArrayList<>();
 
