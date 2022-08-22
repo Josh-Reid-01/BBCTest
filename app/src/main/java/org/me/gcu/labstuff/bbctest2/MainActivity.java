@@ -22,6 +22,8 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class MainActivity extends AppCompatActivity {
     private Spinner spinner;
@@ -87,7 +89,9 @@ lv = (ListView)findViewById(R.id.lv);
                 displayCampusData(campus);
                 //add the location data from the spinner
                 requestLnk= LINK+campus.getLocation();
-                new Thread(new Task()).start();
+                ExecutorService exec = Executors.newFixedThreadPool(10);
+                exec.execute(new Task());
+//                new Thread(new Task()).start();
                 //call the method to show waether
                 showLink(requestLnk);
                 //call the method to show waether

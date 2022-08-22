@@ -58,6 +58,18 @@ else if (tempRSSItem.getTitle().contains("Rain")) {
  else if (tempRSSItem.getTitle().contains("Cloud")){
     img.setBackgroundResource(R.drawable.cloudy);
 }
+
+else if (tempRSSItem.getTitle().contains("Thundery Showers")){
+    img.setBackgroundResource(R.drawable.rain_thunder);
+}
+
+else if (tempRSSItem.getTitle().contains("Clear Sky")){
+    img.setBackgroundResource(R.drawable.day_clear);
+}
+
+else if (tempRSSItem.getTitle().contains("Mist")){
+    img.setBackgroundResource(R.drawable.fog);
+}
          tvTitle.setText(tempRSSItem.getTitle());
          tvDesc.setText(tempRSSItem.getDesc());
          tvDate.setText(tempRSSItem.getPubDate());
